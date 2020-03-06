@@ -2,13 +2,31 @@ import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/about.dart';
 import 'pages/settings.dart';
+import 'widgets/HomeList.dart';
+import 'pages/List.dart';
 
 class Layout {
   static final pages = [HomePage.tag, SettingPage.tag, AboutPage.tag];
 
   static int currItem = 0;
 
-  static Scaffold getContent(BuildContext context, content) {
+  static Scaffold getContent(BuildContext context, content,
+      [bool showbottom = true]) {
+    BottomNavigationBar bottomNavBar = BottomNavigationBar(
+      currentIndex: currItem,
+      fixedColor: secondary(),
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.settings), title: Text('Configurações')),
+        BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Sobre')),
+      ],
+      onTap: (int i) {
+        currItem = i;
+        Navigator.of(context).pushNamed(pages[currItem]);
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Layout.primary(),
@@ -17,25 +35,12 @@ class Layout {
         ),
         actions: _getActions(context),
       ),
+      bottomNavigationBar: showbottom ? bottomNavBar : null,
       body: content,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currItem,
-        fixedColor: secondary(),
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text('Configurações')),
-          BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Sobre')),
-        ],
-        onTap: (int i) {
-          currItem = i;
-          Navigator.of(context).pushNamed(pages[currItem]);
-        },
-      ),
     );
   }
 
-  static List<Widget> _getActions(context) {
+  static List<Widget> _getActions(BuildContext context) {
     List<Widget> items = List<Widget>();
 
     // fora da pagina
@@ -45,7 +50,7 @@ class Layout {
 
     TextEditingController _ctrl = TextEditingController();
 
-    items.add (
+    items.add(
       GestureDetector(
           onTap: () {
             showDialog(
@@ -80,24 +85,30 @@ class Layout {
                             Navigator.of(ctx).pop();
                           }),
                       RaisedButton(
-                          color: primary(),
-                          child: Text('Adicionar ',
-                              style: TextStyle(
-                                color: Layout.light(),
-                              )),
-                          onPressed: () {
-                            print(_ctrl.text);
-                            Navigator.of(ctx).pop();
-                          },
-                        )
-                     ],
-                   );
-                  }
-                );
-              },
-          child: Icon(Icons.add)
-          ),
-      // Padding(padding: EdgeInsets.only(right: 20)),
+                        color: primary(),
+                        child: Text('Adicionar ',
+                            style: TextStyle(
+                              color: Layout.light(),
+                            )),
+                        onPressed: () {
+                          HomeList.items.add(
+                            ListTile(
+                              leading: Icon(Icons.pages),
+                              title: Text(_ctrl.text),
+                              trailing: Icon(Icons.more_vert),
+                              onTap: () {
+                                Navigator.of(context).pushNamed(ListPage.tag);
+                              },
+                            ),
+                          );
+                          Navigator.of(ctx).popAndPushNamed(HomePage.tag);
+                        },
+                      )
+                    ],
+                  );
+                });
+          },
+          child: Icon(Icons.add)),
     );
 
     items.add(Padding(padding: EdgeInsets.only(right: 20)));

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:thizerlist/layout.dart';
+import 'package:thizerlist/pages/List.dart';
 import 'pages/home.dart';
 import 'pages/about.dart';
 import 'pages/settings.dart';
+import 'pages/List.dart';
 
 void main() => runApp(ThizerList());
 
@@ -11,7 +13,8 @@ class ThizerList extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     HomePage.tag: (context) => HomePage(),
     SettingPage.tag: (context) => SettingPage(),
-    AboutPage.tag: (context) => AboutPage()
+    AboutPage.tag: (context) => AboutPage(),
+    ListPage.tag: (context) => ListPage()
   };
    
   @override
