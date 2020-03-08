@@ -4,6 +4,7 @@ import 'pages/about.dart';
 import 'pages/settings.dart';
 import 'widgets/HomeList.dart';
 import 'pages/List.dart';
+import 'package:thizerlist/models/Lista.dart';
 
 class Layout {
   static final pages = [HomePage.tag, SettingPage.tag, AboutPage.tag];
@@ -23,9 +24,13 @@ class Layout {
       ],
       onTap: (int i) {
         currItem = i;
-        Navigator.of(context).pushNamed(pages[currItem]);
+        Navigator.of(context).pushReplacementNamed(pages[i]);
       },
     );
+
+    if (!showbottom) {
+      currItem = 1;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -59,6 +64,7 @@ class Layout {
                 builder: (BuildContext ctx) {
                   final input = TextFormField(
                     controller: _ctrl,
+                    autofocus: true,
                     decoration: InputDecoration(
                         hintText: 'Produto',
                         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -91,17 +97,16 @@ class Layout {
                               color: Layout.light(),
                             )),
                         onPressed: () {
-                          HomeList.items.add(
-                            ListTile(
-                              leading: Icon(Icons.pages),
-                              title: Text(_ctrl.text),
-                              trailing: Icon(Icons.more_vert),
-                              onTap: () {
-                                Navigator.of(context).pushNamed(ListPage.tag);
-                              },
-                            ),
-                          );
-                          Navigator.of(ctx).popAndPushNamed(HomePage.tag);
+                          Lista listaBo = Lista();
+
+                          listaBo.insert({
+                            'name': _ctrl.text,
+                            'created': DateTime.now().toString()
+                          }).then((newRowId) {
+                            Navigator.of(ctx).pop();
+                            Navigator.of(ctx)
+                                .pushReplacementNamed(HomePage.tag);
+                          });
                         },
                       )
                     ],
