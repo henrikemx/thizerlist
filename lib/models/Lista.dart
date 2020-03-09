@@ -1,11 +1,12 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:thizerlist/Application.dart';
+import 'dart:async';
 import 'AbstractModel.dart';
+import 'package:thizerlist/Application.dart';
+import 'package:sqflite/sqflite.dart';
  
 class Lista extends AbstractModel {
 
   ///
-  /// Simpleton
+  /// Singleton
   ///
 
   static Lista _this;
@@ -14,6 +15,7 @@ class Lista extends AbstractModel {
     if (_this == null) {
       _this = Lista.getInstance();
     }
+    return _this;
   }
 
   Lista.getInstance() : super();
@@ -31,7 +33,6 @@ class Lista extends AbstractModel {
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    // return db.query('lista', orderBy: 'created DESC');
     return db.rawQuery('SELECT * FROM lista ORDER BY created DESC');
   }
 
