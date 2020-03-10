@@ -56,7 +56,7 @@ class Layout {
                     );
 
                     return AlertDialog(
-                      title: Text('Nova lista'),
+                      title: Text('Nova Modellista'),
                       content: SingleChildScrollView(
                         child: ListBody(
                           children: <Widget>[
@@ -78,7 +78,7 @@ class Layout {
                                 color: Layout.light(),
                               )),
                           onPressed: () {
-                            Lista listaBo = Lista();
+                            ModelLista listaBo = ModelLista();
 
                             listaBo.insert({
                               'name': _ctrl.text,

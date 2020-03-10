@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thizerlist/layout.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ListPage extends StatefulWidget {
   static final tag = 'list-page';
@@ -9,7 +10,7 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  List<Widget> itemList = List<Widget>();
+  List<Widget> itemsList = List<Widget>();
 
   @override
   void initState() {
@@ -23,64 +24,118 @@ class _ListPageState extends State<ListPage> {
     final content = SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          SizedBox(
-            child: TextFormField(
-              decoration: InputDecoration(hintText: 'Pesquisar'),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            color: Color.fromRGBO(230, 230, 230, 0.5),
+            padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+            child: Text(
+              'Nome da lista',
+              style: TextStyle(fontSize: 16, color: Layout.primary(), height: 2),
             ),
           ),
           Container(
-            color: Colors.yellowAccent[100],
-            height: MediaQuery.of(context).size.height - 250,
+            color: Color.fromRGBO(230, 230, 230, 0.5),
+            padding: EdgeInsets.only(bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 80,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: 'Pesquisar',
+                      contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                SizedBox(
+                  child: FloatingActionButton(
+                    mini: true,
+                    backgroundColor: Layout.info(),
+                    onPressed: () {
+                      setState(() {
+                        _addNewOne();
+                      });
+                    },
+                    child: Icon(Icons.add),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.width - 39,
             child: ListView.builder(
-              itemCount: itemList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return itemList[index];
-              },
-            ),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 30,
-            child: RaisedButton(
-              color: Layout.primary(),
-              onPressed: () {
-                setState(() {
-                  _addNewOne();
-                });
-              },
-              child: Text('Novo item',
-                  style: TextStyle(
-                    color: Layout.light(),
-                  )),
-            ),
+                itemCount: itemsList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return itemsList[index];
+                }),
           ),
           Container(
-            color: Colors.deepOrange[300],
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color.fromRGBO(100, 150, 255, 0.3),
+                  Color.fromRGBO(255, 150, 240, 0.3),
+                ],
+              ),
+            ),
             height: 80,
             child: Row(
               children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width / 2,
-                  padding: EdgeInsets.all(15),
-                  child: Column(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('Total de itens: 1'),
-                      Text('Já adquirido: 0'),
+                      Column(
+                        children: <Widget>[Text('Itens'), Text('10', textScaleFactor: 1.2)],
+                      ),
+                      Column(
+                        children: <Widget>[Text('Carrinho'), Text('2', textScaleFactor: 1.2)],
+                      ),
+                      Column(
+                        children: <Widget>[Text('Faltando'), Text('8', textScaleFactor: 1.2)],
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  color: Colors.indigoAccent[100],
+                  color: Color.fromRGBO(0, 0, 0, 0.04),
                   width: MediaQuery.of(context).size.width / 2,
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.only(left: 10, top: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
+                        'Subt.: R\$ 5,00',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Layout.dark(),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
                         'Total: R\$ 15,00',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Layout.info(),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -95,8 +150,9 @@ class _ListPageState extends State<ListPage> {
     return Layout.getContent(context, content, false);
   }
 
+  //===================================================================
   void _addNewOne() {
-    itemList.add(ListTile(
+    ListTile tile = ListTile(
       leading: GestureDetector(
           child: Icon(Icons.adjust, color: Colors.green),
           onTap: () {
@@ -104,15 +160,32 @@ class _ListPageState extends State<ListPage> {
           }),
       title: Text('Descrição do produto'),
       subtitle: Text('4 * R\$ 1,50 =  R\$ 6,00'),
-      trailing: GestureDetector(
-        child: Icon(Icons.delete),
-        onTap: () {
-          print('Apagando Item...');
-        },
-      ),
-      onLongPress: () {
-        print('Editar produto');
-      },
-    ));
+      trailing: Icon(Icons.arrow_forward_ios),
+    );
+
+    itemsList.add(
+      Slidable(
+        delegate: SlidableDrawerDelegate(),
+        actionExtentRatio: 0.2,
+        closeOnScroll: true,
+        child: tile,
+        secondaryActions: <Widget>[
+          IconSlideAction(
+            caption: 'Editar',
+            icon: Icons.edit,
+            color: Colors.black45,
+            onTap: () {
+              print('Editar');
+            },
+          ),
+          IconSlideAction(
+            caption: 'Excluir',
+            icon: Icons.delete,
+            color: Colors.red,
+            onTap: () {
+              print('Excluir');
+            },
+          ),
+        ]));
   }
 }

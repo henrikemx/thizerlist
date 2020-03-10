@@ -3,22 +3,22 @@ import 'AbstractModel.dart';
 import 'package:thizerlist/Application.dart';
 import 'package:sqflite/sqflite.dart';
  
-class Lista extends AbstractModel {
+class ModelLista extends AbstractModel {
 
   ///
   /// Singleton
   ///
 
-  static Lista _this;
+  static ModelLista _this;
 
-  factory Lista() {
+  factory ModelLista() {
     if (_this == null) {
-      _this = Lista.getInstance();
+      _this = ModelLista.getInstance();
     }
     return _this;
   }
 
-  Lista.getInstance() : super();
+  ModelLista.getInstance() : super();
 
   ///
   /// The Instance
@@ -39,7 +39,7 @@ class Lista extends AbstractModel {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query('lista', where: 'pk_lista = ?', whereArgs: [where], limit: 1);
+    List<Map> items = await db.query('Modellista', where: 'pk_Modellista = ?', whereArgs: [where], limit: 1);
 
     Map result = Map();
 
@@ -54,7 +54,7 @@ class Lista extends AbstractModel {
   Future<int> insert (Map<String, dynamic> values) async {
     Database db = await this.getDb();
 
-    int newId = await db.insert('lista', values);
+    int newId = await db.insert('Modellista', values);
 
     return newId;
   }
@@ -63,7 +63,7 @@ class Lista extends AbstractModel {
   Future<bool> update(Map<String, dynamic> values, where) async {
     Database db = await this.getDb();
 
-    int rows = await db.update('lista', values, where: 'pk_lista = ?', whereArgs: [where]);
+    int rows = await db.update('Modellista', values, where: 'pk_Modellista = ?', whereArgs: [where]);
 
     return (rows != 0);
   }
@@ -72,7 +72,7 @@ class Lista extends AbstractModel {
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
 
-    int rows = await db.delete('lista', where: 'pk_lista = ?', whereArgs: [id]);
+    int rows = await db.delete('Modellista', where: 'pk_Modellista = ?', whereArgs: [id]);
 
     return (rows != 0);
   }

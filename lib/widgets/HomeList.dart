@@ -19,7 +19,7 @@ class HomeList extends StatefulWidget {
 class _HomeListState extends State<HomeList> {
   List<Widget> values = List<Widget>();
 
-  Lista listaBo = Lista();
+  ModelLista listaBo = ModelLista();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,7 @@ class _HomeListState extends State<HomeList> {
                 color: Layout.primary(),
                 child: Text('Salvar', style: TextStyle(color: Layout.light())),
                 onPressed: () {
-                  Lista listaBo = Lista();
+                  ModelLista listaBo = ModelLista();
                   listaBo.update({
                     'name': _cEdit.text,
                     'created': DateTime.now().toString(),
