@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:thizerlist/layout.dart';
-import 'package:thizerlist/pages/List.dart';
 import 'pages/home.dart';
 import 'pages/about.dart';
 import 'pages/settings.dart';
-import 'pages/List.dart';
+import 'pages/items.dart';
 
 void main() => runApp(ThizerList());
 
@@ -14,7 +13,7 @@ class ThizerList extends StatelessWidget {
     HomePage.tag: (context) => HomePage(),
     SettingPage.tag: (context) => SettingPage(),
     AboutPage.tag: (context) => AboutPage(),
-    ListPage.tag: (context) => ListPage()
+    ItemsPage.tag: (context) => ItemsPage()
   };
    
   @override

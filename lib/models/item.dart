@@ -3,22 +3,22 @@ import 'AbstractModel.dart';
 import 'package:thizerlist/Application.dart';
 import 'package:sqflite/sqflite.dart';
  
-class ModelLista extends AbstractModel {
+class ModelItem extends AbstractModel {
 
   ///
   /// Singleton
   ///
 
-  static ModelLista _this;
+  static ModelItem _this;
 
-  factory ModelLista() {
+  factory ModelItem() {
     if (_this == null) {
-      _this = ModelLista.getInstance();
+      _this = ModelItem.getInstance();
     }
     return _this;
   }
 
-  ModelLista.getInstance() : super();
+  ModelItem.getInstance() : super();
 
   ///
   /// The Instance
@@ -33,13 +33,21 @@ class ModelLista extends AbstractModel {
   @override
   Future<List<Map>> list() async {
     Database db = await this.getDb();
-    return db.rawQuery('SELECT * FROM lista ORDER BY created DESC');
+    return db.rawQuery('SELECT * FROM item ORDER BY created DESC');
+  }
+
+  // retorna todos os itens da lista
+  // [fkLista] ID da lista
+
+  Future<List<Map>> itemByList(int fkLista) async {
+    Database db = await this.getDb();
+    return db.rawQuery('SELECT * FROM item WHERE fk_lista = $fkLista BY created DESC');
   }
 
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query('lista', where: 'pk_lista = ?', whereArgs: [where], limit: 1);
+    List<Map> items = await db.query('item', where: 'pk_item = ?', whereArgs: [where], limit: 1);
 
     Map result = Map();
 
@@ -54,7 +62,7 @@ class ModelLista extends AbstractModel {
   Future<int> insert (Map<String, dynamic> values) async {
     Database db = await this.getDb();
 
-    int newId = await db.insert('lista', values);
+    int newId = await db.insert('item', values);
 
     return newId;
   }
@@ -63,7 +71,7 @@ class ModelLista extends AbstractModel {
   Future<bool> update(Map<String, dynamic> values, where) async {
     Database db = await this.getDb();
 
-    int rows = await db.update('lista', values, where: 'pk_lista = ?', whereArgs: [where]);
+    int rows = await db.update('item', values, where: 'pk_item = ?', whereArgs: [where]);
 
     return (rows != 0);
   }
@@ -72,7 +80,7 @@ class ModelLista extends AbstractModel {
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
 
-    int rows = await db.delete('lista', where: 'pk_lista = ?', whereArgs: [id]);
+    int rows = await db.delete('item', where: 'pk_item = ?', whereArgs: [id]);
 
     return (rows != 0);
   }

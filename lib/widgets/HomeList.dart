@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../pages/home.dart';
 import '../models/Lista.dart';
-import '../pages/List.dart';
+import '../pages/items.dart';
 import '../layout.dart';
 
 enum ListAction { edit, delete }
@@ -43,7 +43,7 @@ class _HomeListState extends State<HomeList> {
         Map item = widget.items[index];
         DateTime created = DateTime.tryParse(item['created']);
         return ListTile(
-          leading: Icon(Icons.pages),
+          leading: Icon(Icons.pages, size: 42),
           title: Text(item['name']),
           subtitle: Text(df.format(created)),
           trailing: PopupMenuButton<ListAction>(
@@ -79,7 +79,11 @@ class _HomeListState extends State<HomeList> {
             },
           ),
           onTap: () {
-            Navigator.of(context).pushNamed(ListPage.tag);
+            // Aponta na lista qual está selecionado
+            ItemsPage.pkList = item['pk_list'];
+
+            // Muda a página
+            Navigator.of(context).pushNamed(ItemsPage.tag);
           },
         );
       },

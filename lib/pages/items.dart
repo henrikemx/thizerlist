@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:thizerlist/layout.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class ListPage extends StatefulWidget {
-  static final tag = 'list-page';
+class ItemsPage extends StatefulWidget {
+  static final tag = 'items-page';
+
+  static int pkList;
 
   @override
-  _ListPageState createState() => _ListPageState();
+  _ItemsPageState createState() => _ItemsPageState();
 }
 
-class _ListPageState extends State<ListPage> {
+class _ItemsPageState extends State<ItemsPage> {
   List<Widget> itemsList = List<Widget>();
 
   @override
