@@ -1,6 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:thizerlist/layout.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
+import '../layout.dart';
+import '../models/item.dart';
+import '../Application.dart';
+import '../widgets/itemslist.dart';
 
 class ItemsPage extends StatefulWidget {
   static final tag = 'items-page';
@@ -12,13 +16,18 @@ class ItemsPage extends StatefulWidget {
 }
 
 class _ItemsPageState extends State<ItemsPage> {
-  List<Widget> itemsList = List<Widget>();
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final TextEditingController _cName = TextEditingController();
+  final TextEditingController _cQtde = TextEditingController();
+  final MoneyMaskedTextController _cValor =
+      MoneyMaskedTextController(thousandSeparator: '.', decimalSeparator: ',', leftSymbol: 'R\$ ');
+
+  final ItemsListBloc itemsListBloc = ItemsListBloc();
 
   @override
-  void initState() {
-    _addNewOne();
-
-    super.initState();
+  void dispose() {
+    itemsListBloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,7 +71,7 @@ class _ItemsPageState extends State<ItemsPage> {
                     backgroundColor: Layout.info(),
                     onPressed: () {
                       setState(() {
-                        _addNewOne();
+                        _addNewOne(context);
                       });
                     },
                     child: Icon(Icons.add),
@@ -73,11 +82,31 @@ class _ItemsPageState extends State<ItemsPage> {
           ),
           Container(
             height: MediaQuery.of(context).size.width - 39,
-            child: ListView.builder(
-                itemCount: itemsList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return itemsList[index];
-                }),
+            // child: ListView.builder(
+            //     itemCount: itemsList.length,
+            //     itemBuilder: (BuildContext context, int index) {
+            //       return itemsList[index];
+            //     }),
+            child: StreamBuilder<List<Map>>(
+              stream: itemsListBloc.lists,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: Text('Carregando...'),
+                    );
+                    break;
+                  default:
+                    if (snapshot.error) {
+                      print(snapshot.error);
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return ItemsList(items: snapshot.data);
+                    }
+                }
+              },
+            ),
           ),
           Container(
             decoration: BoxDecoration(
@@ -152,42 +181,126 @@ class _ItemsPageState extends State<ItemsPage> {
     return Layout.getContent(context, content, false);
   }
 
-  //===================================================================
-  void _addNewOne() {
-    ListTile tile = ListTile(
-      leading: GestureDetector(
-          child: Icon(Icons.adjust, color: Colors.green),
-          onTap: () {
-            print('Marcar como adquirido');
-          }),
-      title: Text('Descrição do produto'),
-      subtitle: Text('4 * R\$ 1,50 =  R\$ 6,00'),
-      trailing: Icon(Icons.arrow_forward_ios),
-    );
+  void _addNewOne(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext ctx) {
+          final inputName = TextFormField(
+            controller: _cName,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Nome do item',
+              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Obrigatório';
+              }
+            },
+          );
 
-    itemsList.add(
-      Slidable(
-        delegate: SlidableDrawerDelegate(),
-        actionExtentRatio: 0.2,
-        closeOnScroll: true,
-        child: tile,
-        secondaryActions: <Widget>[
-          IconSlideAction(
-            caption: 'Editar',
-            icon: Icons.edit,
-            color: Colors.black45,
-            onTap: () {
-              print('Editar');
+          _cQtde.text = '1';
+          final inputQuantidade = TextFormField(
+            controller: _cQtde,
+            autofocus: false,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: 'Quantidade',
+              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+            ),
+            validator: (value) {
+              if (int.parse(value) < 1) {
+                return 'Informe um valor positivo';
+              }
             },
-          ),
-          IconSlideAction(
-            caption: 'Excluir',
-            icon: Icons.delete,
-            color: Colors.red,
-            onTap: () {
-              print('Excluir');
+          );
+
+          final inputValor = TextFormField(
+            controller: _cValor,
+            autofocus: true,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              hintText: 'Informe o valor',
+              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+            ),
+            validator: (value) {
+              if (currencyToDouble(value) < 0.0) {
+                return 'Obrigatório';
+              }
             },
-          ),
-        ]));
+          );
+
+          return Form(
+            key: _formkey,
+            child: AlertDialog(
+              title: Text('Adicionar item'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    inputName,
+                    SizedBox(height: 15),
+                    inputQuantidade,
+                    SizedBox(height: 15),
+                    inputValor
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                RaisedButton(
+                    color: Layout.secondary(),
+                    child: Text('Cancelar', style: TextStyle(color: Layout.light())),
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    }),
+                RaisedButton(
+                    color: Layout.primary(),
+                    child: Text('Salvar', style: TextStyle(color: Layout.light())),
+                    onPressed: () {
+                      if (_formkey.currentState.validate()) {
+                        
+                        // Instancia Model
+                        ModelItem itemBo = ModelItem();
+
+                        // Adicionado dados ao BD
+                        itemBo.insert({
+                          'fk_lista': ItemsPage.pkList,
+                          'name': _cName.text,
+                          'quantidade': _cQtde.text,
+                          'valor': _cValor.text,
+                          'created': DateTime.now().toString()
+                        }).then((saved){
+                          Navigator.of(ctx).pop();
+                          Navigator.of(ctx).pushReplacementNamed(ItemsPage.tag);
+                        });
+                      }
+                    }),
+              ],
+            ),
+          );
+        });
+  }
+}
+
+class ItemsListBloc {
+  ItemsListBloc() {
+    getList();
+  }
+
+  ModelItem itemBo = ModelItem();
+
+  final _controller = StreamController<List<Map>>.broadcast();
+
+  get lists => _controller.stream;
+
+  dispose() {
+    _controller.close();
+  }
+
+  getList() async {
+    _controller.sink.add(await itemBo.itemByList(ItemsPage.pkList));
   }
 }
