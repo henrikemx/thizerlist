@@ -41,7 +41,7 @@ class ModelItem extends AbstractModel {
 
   Future<List<Map>> itemsByList(int fkLista) async {
     Database db = await this.getDb();
-    return db.rawQuery('SELECT * FROM item WHERE fk_lista = $fkLista ORDER BY name ASC, created DESC');
+    return db.rawQuery('SELECT * FROM item WHERE fk_lista = $fkLista ORDER BY created DESC');
   }
 
   @override

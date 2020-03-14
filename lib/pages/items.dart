@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:thizerlist/layout.dart';
+import 'dart:async';
+import 'package:thizerlist/widgets/itemslist.dart';
 import 'package:thizerlist/models/item.dart';
 import 'package:thizerlist/application.dart';
-import 'package:thizerlist/widgets/itemslist.dart';
+import 'package:thizerlist/layout.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class ItemsPage extends StatefulWidget {
   static final tag = 'items-page';
@@ -52,7 +52,7 @@ class _ItemsPageState extends State<ItemsPage> {
               children: <Widget>[
                 SizedBox(
                   width: MediaQuery.of(context).size.width - 80,
-                  child: TextFormField(
+                  child: TextField(
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -68,7 +68,7 @@ class _ItemsPageState extends State<ItemsPage> {
                 SizedBox(
                   child: FloatingActionButton(
                     mini: true,
-                    backgroundColor: Layout.info(),
+                    backgroundColor: Layout.secondary(),
                     onPressed: () {
                       setState(() {
                         _addNewOne(context);
@@ -93,7 +93,7 @@ class _ItemsPageState extends State<ItemsPage> {
                     );
                     break;
                   default:
-                    if (snapshot.error) {
+                    if (snapshot.hasError) {
                       print(snapshot.error);
                       return Text('Error: ${snapshot.error}');
                     } else {
@@ -202,7 +202,7 @@ class _ItemsPageState extends State<ItemsPage> {
             autofocus: false,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              hintText: 'Quantidade',
+              hintText: 'Qtde',
               contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
             ),
@@ -218,7 +218,7 @@ class _ItemsPageState extends State<ItemsPage> {
             autofocus: true,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
-              hintText: 'Informe o valor',
+              hintText: 'Valor R\$ ',
               contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
             ),
@@ -256,7 +256,6 @@ class _ItemsPageState extends State<ItemsPage> {
                     child: Text('Salvar', style: TextStyle(color: Layout.light())),
                     onPressed: () {
                       if (_formkey.currentState.validate()) {
-                        
                         // Instancia Model
                         ModelItem itemBo = ModelItem();
 
@@ -264,12 +263,19 @@ class _ItemsPageState extends State<ItemsPage> {
                         itemBo.insert({
                           'fk_lista': ItemsPage.pkList,
                           'name': _cName.text,
-                          'quantidade': _cQtde.text,
+                          'qtde': _cQtde.text,
                           'valor': _cValor.text,
                           'created': DateTime.now().toString()
-                        }).then((saved){
+                        }).then((saved) {
                           Navigator.of(ctx).pop();
                           Navigator.of(ctx).pushReplacementNamed(ItemsPage.tag);
+                          print('=================================');
+                          print('Nome: ${_cName.text}, Valor: ${_cValor.text}, Qtde: ${_cQtde.text}');
+                          // print(ItemsPage.pkList);
+                          // print(DateTime.now().toString());
+                          // print(' Valor de retorno de "itemsListBloc.getList()" = ${itemsListBloc.getList()}');
+                          // print('created');
+                          print('=================================');
                         });
                       }
                     }),

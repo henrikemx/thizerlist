@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:thizerlist/Application.dart';
+import 'package:thizerlist/application.dart';
 
 abstract class AbstractModel {
   Database _db;

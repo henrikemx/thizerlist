@@ -45,7 +45,9 @@ class ModelLista extends AbstractModel {
 
     if (items.isNotEmpty){
       result = items.first;
+      print(result);
     }
+
 
     return result;
   }

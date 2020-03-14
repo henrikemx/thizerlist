@@ -56,7 +56,7 @@ class Layout {
                     );
 
                     return AlertDialog(
-                      title: Text('Nova Modellista'),
+                      title: Text('Nova lista'),
                       content: SingleChildScrollView(
                         child: ListBody(
                           children: <Widget>[

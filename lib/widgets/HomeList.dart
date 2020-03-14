@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../pages/home.dart';
-import '../models/Lista.dart';
 import '../pages/items.dart';
+import '../models/Lista.dart';
 import '../layout.dart';
 
 enum ListAction { edit, delete }
@@ -17,7 +17,7 @@ class HomeList extends StatefulWidget {
 }
 
 class _HomeListState extends State<HomeList> {
-  List<Widget> values = List<Widget>();
+  // List<Widget> value = List<Widget>();
 
   ModelLista listaBo = ModelLista();
 
@@ -66,7 +66,7 @@ class _HomeListState extends State<HomeList> {
             onSelected: (ListAction result) {
               switch (result) {
                 case ListAction.edit:
-                  this.showEditDialog(context, item);
+                  showEditDialog(context, item);
                   break;
                 case ListAction.delete:
                   listaBo.delete(item['pk_lista']).then((deleted) {
