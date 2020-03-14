@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'AbstractModel.dart';
-import 'package:thizerlist/Application.dart';
+import 'package:thizerlist/application.dart';
 import 'package:sqflite/sqflite.dart';
  
 class ModelItem extends AbstractModel {
@@ -39,9 +39,9 @@ class ModelItem extends AbstractModel {
   // retorna todos os itens da lista
   // [fkLista] ID da lista
 
-  Future<List<Map>> itemByList(int fkLista) async {
+  Future<List<Map>> itemsByList(int fkLista) async {
     Database db = await this.getDb();
-    return db.rawQuery('SELECT * FROM item WHERE fk_lista = $fkLista BY created DESC');
+    return db.rawQuery('SELECT * FROM item WHERE fk_lista = $fkLista ORDER BY name ASC, created DESC');
   }
 
   @override

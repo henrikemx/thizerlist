@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import '../layout.dart';
-import '../models/item.dart';
-import '../Application.dart';
-import '../widgets/itemslist.dart';
+import 'package:thizerlist/layout.dart';
+import 'package:thizerlist/models/item.dart';
+import 'package:thizerlist/application.dart';
+import 'package:thizerlist/widgets/itemslist.dart';
 
 class ItemsPage extends StatefulWidget {
   static final tag = 'items-page';
@@ -82,11 +82,6 @@ class _ItemsPageState extends State<ItemsPage> {
           ),
           Container(
             height: MediaQuery.of(context).size.width - 39,
-            // child: ListView.builder(
-            //     itemCount: itemsList.length,
-            //     itemBuilder: (BuildContext context, int index) {
-            //       return itemsList[index];
-            //     }),
             child: StreamBuilder<List<Map>>(
               stream: itemsListBloc.lists,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -301,6 +296,6 @@ class ItemsListBloc {
   }
 
   getList() async {
-    _controller.sink.add(await itemBo.itemByList(ItemsPage.pkList));
+    _controller.sink.add(await itemBo.itemsByList(ItemsPage.pkList));
   }
 }

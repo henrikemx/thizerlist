@@ -30,11 +30,11 @@ double currencyToDouble(String value) {
   return double.tryParse(value) ?? null;
 }
 
-double currecyToFloat(String value) {
+double currencyToFloat(String value) {
   return currencyToDouble(value);
 }
 
 String doubleToCurrency(double value) {
-  NumberFormat nf = NumberFormat.compactCurrency(locale: 'pr_BR', symbol: 'R\$');
+  NumberFormat nf = NumberFormat.compactCurrency(locale: 'pt_BR', symbol: 'R\$');
   return nf.format(value);
 }
