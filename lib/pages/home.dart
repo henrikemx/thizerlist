@@ -22,6 +22,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('====================================');
+    print('listaBloc.lists = ${listaBloc.lists}');
+    print('====================================');
     final content = StreamBuilder<List<Map>>(
         stream: listaBloc.lists,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -36,10 +39,16 @@ class _HomePageState extends State<HomePage> {
                 print(snapshot.error);
                 return Text('Error: ${snapshot.error}');
               } else {
-                return HomeList(items: snapshot.data);
+                print('====================================');
+                print('snapshot.data = ${snapshot.data}');
+                print('====================================');
+                return HomeList(items: snapshot.data); // conecta-se ao widget HomeList
               }
           }
         });
+    print('====================================');
+    print('Layout.getContent(context, content) = $context, $content');
+    print('====================================');
 
     return Layout.getContent(context, content);
   }

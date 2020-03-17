@@ -24,6 +24,9 @@ class _ItemsPageState extends State<ItemsPage> {
 
   final ItemsListBloc itemsListBloc = ItemsListBloc();
 
+  String filterText = '';
+
+
   @override
   void dispose() {
     itemsListBloc.dispose();
@@ -62,6 +65,11 @@ class _ItemsPageState extends State<ItemsPage> {
                         borderRadius: BorderRadius.circular(32),
                       ),
                     ),
+                    onChanged: (text){
+                      setState(() {
+                        filterText = text;
+                      });
+                    },
                   ),
                 ),
                 SizedBox(width: 10),
@@ -81,7 +89,7 @@ class _ItemsPageState extends State<ItemsPage> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.width - 39,
+            height: MediaQuery.of(context).size.width - 20,
             child: StreamBuilder<List<Map>>(
               stream: itemsListBloc.lists,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -97,7 +105,11 @@ class _ItemsPageState extends State<ItemsPage> {
                       print(snapshot.error);
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      return ItemsList(items: snapshot.data);
+                      print('====================================');
+                      print('widget.items.ItemsList = ${snapshot.data}');
+                      print('====================================');
+
+                      return ItemsList(items: snapshot.data, filter: filterText);
                     }
                 }
               },
@@ -118,7 +130,7 @@ class _ItemsPageState extends State<ItemsPage> {
                 ],
               ),
             ),
-            height: 80,
+            height: 60,
             child: Row(
               children: <Widget>[
                 Container(
@@ -186,8 +198,8 @@ class _ItemsPageState extends State<ItemsPage> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Nome do item',
-              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+              contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
             ),
             validator: (value) {
               if (value.isEmpty) {
@@ -203,8 +215,8 @@ class _ItemsPageState extends State<ItemsPage> {
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: 'Qtde',
-              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+              contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
             ),
             validator: (value) {
               if (int.parse(value) < 1) {
@@ -219,8 +231,8 @@ class _ItemsPageState extends State<ItemsPage> {
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
               hintText: 'Valor R\$ ',
-              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+              contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
             ),
             validator: (value) {
               if (currencyToDouble(value) < 0.0) {
@@ -237,9 +249,9 @@ class _ItemsPageState extends State<ItemsPage> {
                 child: ListBody(
                   children: <Widget>[
                     inputName,
-                    SizedBox(height: 15),
+                    SizedBox(height: 10),
                     inputQuantidade,
-                    SizedBox(height: 15),
+                    SizedBox(height: 10),
                     inputValor
                   ],
                 ),
@@ -270,11 +282,10 @@ class _ItemsPageState extends State<ItemsPage> {
                           Navigator.of(ctx).pop();
                           Navigator.of(ctx).pushReplacementNamed(ItemsPage.tag);
                           print('=================================');
-                          print('Nome: ${_cName.text}, Valor: ${_cValor.text}, Qtde: ${_cQtde.text}');
-                          // print(ItemsPage.pkList);
-                          // print(DateTime.now().toString());
-                          // print(' Valor de retorno de "itemsListBloc.getList()" = ${itemsListBloc.getList()}');
-                          // print('created');
+                          print('ItemsPage.pkList = ${ItemsPage.pkList}');
+                          print('Nome: ${_cName.text}, , ');
+                          print('Valor: ${_cValor.text}');
+                          print('Qtde: ${_cQtde.text}');
                           print('=================================');
                         });
                       }

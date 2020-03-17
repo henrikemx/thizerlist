@@ -5,8 +5,9 @@ import '../layout.dart';
 
 class ItemsList extends StatefulWidget {
   final List<Map> items;
+  final String filter;
 
-  const ItemsList({Key key, this.items}) : super(key: key);
+  const ItemsList({Key key, this.items, this.filter}) : super(key: key);
 
   @override
   _ItemsListState createState() => _ItemsListState();
@@ -19,16 +20,39 @@ class _ItemsListState extends State<ItemsList> {
     if (widget.items.isEmpty) {
       return ListView(children: <Widget>[
         ListTile(
-          leading: Icon(Icons.check_box_outline_blank, size: 32),
-          title: Text('Nenhum item a ser exibido'),
+          title: Text('Nenhum item a ser exibido', textAlign: TextAlign.center),
         )
       ]);
     }
 
+    List<Map> filteredList = List<Map>();
+
+    if (widget.filter.isNotEmpty) {
+      for (dynamic item in widget.items) {
+        String name = item['name'].toString().toLowerCase();
+        if (name.contains(widget.filter.toLowerCase())) {
+          filteredList.add(item);
+        }
+      }
+    } else {
+      filteredList.addAll(widget.items);
+    }
+
+    if (filteredList.isEmpty){
+      return ListView(
+        children: <Widget>[
+          ListTile(
+            title: Text('Nenhum item encontrado...'),
+          )
+        ],
+      );
+    }
+
+
     return ListView.builder(
-        itemCount: widget.items.length,
+        itemCount: filteredList.length,
         itemBuilder: (BuildContext context, int i) {
-          Map item = widget.items[i];
+          Map item = filteredList[i];
           double realVal = currencyToDouble(item['valor']);
           String valTotal = doubleToCurrency(realVal * item['qtde']);
           return Slidable(
@@ -40,10 +64,29 @@ class _ItemsListState extends State<ItemsList> {
                   child: Icon(Icons.check_box_outline_blank, color: Layout.secondary(), size: 32)),
               title: Text(item['name']),
               subtitle: Text('${item['qtde']} * R\$ ${item['valor']} = R\$ $valTotal'),
+              trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
                 print('Marcar como adquirido');
               },
             ),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                caption: 'Editar',
+                icon: Icons.edit,
+                color: Colors.black45,
+                onTap: () {
+                  print('Editar');
+                },
+              ),
+              IconSlideAction(
+                caption: 'Excluir',
+                icon: Icons.delete,
+                color: Colors.red,
+                onTap: () {
+                  print('Excluir');
+                },
+              ),
+            ],
           );
         });
   }

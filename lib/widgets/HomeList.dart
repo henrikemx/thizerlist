@@ -17,7 +17,6 @@ class HomeList extends StatefulWidget {
 }
 
 class _HomeListState extends State<HomeList> {
-  // List<Widget> value = List<Widget>();
 
   ModelLista listaBo = ModelLista();
 
@@ -80,7 +79,10 @@ class _HomeListState extends State<HomeList> {
           ),
           onTap: () {
             // Aponta na lista qual está selecionado
-            ItemsPage.pkList = item['pk_list'];
+            ItemsPage.pkList = item['pk_lista'];
+              print('====================================');
+              print('ItemsPage.pkList = ${ItemsPage.pkList}');
+              print('====================================');
 
             // Muda a página
             Navigator.of(context).pushNamed(ItemsPage.tag);

@@ -27,7 +27,7 @@ class Layout {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Layout.primary(),
-        title: Text('ThizerList'),
+        title: Text('ThizerList - Lista de compras'),
         actions: showbottom ? _getActions(context) : [],
       ),
       bottomNavigationBar: showbottom ? bottomNavBar : null,
@@ -46,7 +46,7 @@ class Layout {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext ctx) {
-                    final input = TextFormField(
+              final input = TextFormField(
                       controller: _ctrl,
                       autofocus: true,
                       decoration: InputDecoration(
@@ -55,6 +55,14 @@ class Layout {
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
                     );
 
+              print('====================================');
+              print('context = $context');
+              print('input = $input');
+              print('_ctrl = $_ctrl');
+              print('ctx = $ctx');
+              print('_ctrl.text = ${_ctrl.text}');
+              print('items = $items');
+              print('====================================');
                     return AlertDialog(
                       title: Text('Nova lista'),
                       content: SingleChildScrollView(
@@ -98,6 +106,10 @@ class Layout {
     }
 
     items.add(Padding(padding: EdgeInsets.only(right: 20)));
+
+    print('====================================');
+    print('items = $items');
+    print('====================================');
 
     return items;
   }
