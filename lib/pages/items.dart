@@ -68,7 +68,7 @@ class _ItemsPageState extends State<ItemsPage> {
                 SizedBox(
                   child: FloatingActionButton(
                     mini: true,
-                    backgroundColor: Layout.secondary(),
+                    backgroundColor: Layout.info(),
                     onPressed: () {
                       setState(() {
                         _addNewOne(context);

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'AbstractModel.dart';
-import 'package:thizerlist/Application.dart';
+import 'package:thizerlist/application.dart';
 import 'package:sqflite/sqflite.dart';
  
 class ModelLista extends AbstractModel {
@@ -45,7 +45,6 @@ class ModelLista extends AbstractModel {
 
     if (items.isNotEmpty){
       result = items.first;
-      print(result);
     }
 
 

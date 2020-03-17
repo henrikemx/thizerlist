@@ -25,9 +25,9 @@ class ThizerList extends StatelessWidget {
         primaryColor: Layout.primary(),
         accentColor: Layout.secondary(),
         textTheme: TextTheme(
-          headline: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-          title: TextStyle(fontSize: 24, fontStyle: FontStyle.italic, color: Layout.info()),
-          body1: TextStyle(fontSize: 14)
+          headline5: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          headline6: TextStyle(fontSize: 24, fontStyle: FontStyle.italic, color: Layout.info()),
+          bodyText2: TextStyle(fontSize: 14)
         ),
       ),
       home:  HomePage(),
