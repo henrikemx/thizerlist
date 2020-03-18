@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:thizerlist/application.dart';
+import 'package:thizerlist/models/item.dart';
+import 'package:thizerlist/pages/item-edit.dart';
+import 'package:thizerlist/pages/items.dart';
 import '../layout.dart';
 
 class ItemsList extends StatefulWidget {
   final List<Map> items;
   final String filter;
+  final Function refresher;
 
-  const ItemsList({Key key, this.items, this.filter}) : super(key: key);
+  const ItemsList({Key key, this.items, this.filter, this.refresher}) : super(key: key);
 
   @override
   _ItemsListState createState() => _ItemsListState();
@@ -38,7 +42,7 @@ class _ItemsListState extends State<ItemsList> {
       filteredList.addAll(widget.items);
     }
 
-    if (filteredList.isEmpty){
+    if (filteredList.isEmpty) {
       return ListView(
         children: <Widget>[
           ListTile(
@@ -48,6 +52,7 @@ class _ItemsListState extends State<ItemsList> {
       );
     }
 
+    ModelItem itemBo = ModelItem();
 
     return ListView.builder(
         itemCount: filteredList.length,
@@ -61,12 +66,20 @@ class _ItemsListState extends State<ItemsList> {
             closeOnScroll: true,
             child: ListTile(
               leading: GestureDetector(
-                  child: Icon(Icons.check_box_outline_blank, color: Layout.secondary(), size: 32)),
+                  child: Icon(
+                    ((item['checked'] == 1) ? Icons.check_box : Icons.check_box_outline_blank), 
+                    color: ((item['cecked'] == 0) ? Layout.info() : Layout.success()),
+                    size: 32)),
               title: Text(item['name']),
               subtitle: Text('${item['qtde']} * R\$ ${item['valor']} = R\$ $valTotal'),
               trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-                print('Marcar como adquirido');
+                itemBo.update({'checked': !(item['checked'] == 1)}, item['pk_item']).then(
+                    (bool updated) {
+                  if (updated){
+                    widget.refresher();
+                  }
+                });
               },
             ),
             secondaryActions: <Widget>[
@@ -75,7 +88,10 @@ class _ItemsListState extends State<ItemsList> {
                 icon: Icons.edit,
                 color: Colors.black45,
                 onTap: () {
-                  print('Editar');
+                  itemBo.getItem(item['pk_item']).then((Map i) {
+                    ItemEditPage.item = i;
+                    Navigator.of(context).pushNamed(ItemEditPage.tag);
+                  });
                 },
               ),
               IconSlideAction(
@@ -83,7 +99,31 @@ class _ItemsListState extends State<ItemsList> {
                 icon: Icons.delete,
                 color: Colors.red,
                 onTap: () {
-                  print('Excluir');
+                  showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext ctx) {
+                        return AlertDialog(
+                          title: Text("Tem certeza ??"),
+                          content: Text('Esta ação não pode ser desfeita !!'),
+                          actions: <Widget>[
+                            RaisedButton(
+                                color: Layout.secondary(),
+                                child: Text('Cancelar', style: TextStyle(color: Layout.light())),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                }),
+                            RaisedButton(
+                                color: Layout.danger(),
+                                child: Text('Excluir', style: TextStyle(color: Layout.light())),
+                                onPressed: () {
+                                  itemBo.delete(item['pk_item']);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pushNamed(ItemsPage.tag);
+                                }),
+                          ],
+                        );
+                      });
                 },
               ),
             ],

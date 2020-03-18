@@ -80,7 +80,8 @@ class _HomeListState extends State<HomeList> {
           onTap: () {
             // Aponta na lista qual está selecionado
             ItemsPage.pkList = item['pk_lista'];
-              print('====================================');
+            ItemsPage.nameList = item['name'];
+               print('====================================');
               print('ItemsPage.pkList = ${ItemsPage.pkList}');
               print('====================================');
 
