@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:thizerlist/models/item.dart';
 import '../pages/home.dart';
 import '../pages/items.dart';
 import '../models/Lista.dart';
 import '../layout.dart';
 
-enum ListAction { edit, delete }
+enum ListAction { edit, delete, clone }
 
 class HomeList extends StatefulWidget {
   final List<Map> items;
+  final HomeListBloc listaBloc;
 
-  HomeList({this.items}) : super();
+  HomeList({this.items, this.listaBloc}) : super();
 
   @override
   _HomeListState createState() => _HomeListState();
 }
 
 class _HomeListState extends State<HomeList> {
-
   ModelLista listaBo = ModelLista();
+  ModelItem itemBo = ModelItem();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class _HomeListState extends State<HomeList> {
         return ListTile(
           leading: Icon(Icons.pages, size: 42),
           title: Text(item['name']),
-          subtitle: Text(df.format(created)),
+          subtitle: Text('(' + item['qtdeItems'].toString() + ' itens) - ' + df.format(created)),
           trailing: PopupMenuButton<ListAction>(
             itemBuilder: (BuildContext context) {
               return <PopupMenuEntry<ListAction>>[
@@ -60,6 +62,12 @@ class _HomeListState extends State<HomeList> {
                     children: <Widget>[Icon(Icons.delete), Text('Excluir')],
                   ),
                 ),
+                PopupMenuItem<ListAction>(
+                  value: ListAction.clone,
+                  child: Row(
+                    children: <Widget>[Icon(Icons.content_copy), Text('Clonar')],
+                  ),
+                ),
               ];
             },
             onSelected: (ListAction result) {
@@ -68,11 +76,34 @@ class _HomeListState extends State<HomeList> {
                   showEditDialog(context, item);
                   break;
                 case ListAction.delete:
-                  listaBo.delete(item['pk_lista']).then((deleted) {
-                    if (deleted) {
-                      Navigator.of(context).pushReplacementNamed(HomePage.tag);
-                    }
+                  itemBo.deleteAllFromList(item['pk_lista']).then((int rowDeleted) {
+                    listaBo.delete(item['pk_lista']).then((deleted) {
+                      if (deleted) {
+                        widget.listaBloc.getList();
+                      }
+                    });
                   });
+                  break;
+                case ListAction.clone:
+                  listaBo.insert({
+                    'name': item['name'] + ' (copia)',
+                    'created': DateTime.now().toString()
+                  }).then((int newId) {
+                    itemBo.itemsByList(item['pk_lista']).then((List<Map> listItems) async {
+                      for (Map listItem in listItems) {
+                        await itemBo.insert({
+                          'fk_lista': newId,
+                          'name': listItem['name'],
+                          'qtde': listItem['qtde'],
+                          'valor': listItem['valor'],
+                          'checked': 0,
+                          'created': DateTime.now().toString(),
+                        });
+                      }
+                      widget.listaBloc.getList();
+                    });
+                  });
+
                   break;
               }
             },
@@ -81,9 +112,9 @@ class _HomeListState extends State<HomeList> {
             // Aponta na lista qual está selecionado
             ItemsPage.pkList = item['pk_lista'];
             ItemsPage.nameList = item['name'];
-               print('====================================');
-              print('ItemsPage.pkList = ${ItemsPage.pkList}');
-              print('====================================');
+            print('====================================');
+            print('ItemsPage.pkList = ${ItemsPage.pkList}');
+            print('====================================');
 
             // Muda a página
             Navigator.of(context).pushNamed(ItemsPage.tag);

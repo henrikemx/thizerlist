@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 
+Map<String, int> unity = Map.from({ 'un': 0, 'Kg': 3});
+
 String dbName = 'thizerlist.db';
 int dbVersion = 1;
 

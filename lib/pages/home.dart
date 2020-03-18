@@ -42,7 +42,10 @@ class _HomePageState extends State<HomePage> {
                 print('====================================');
                 print('snapshot.data = ${snapshot.data}');
                 print('====================================');
-                return HomeList(items: snapshot.data); // conecta-se ao widget HomeList
+                return HomeList(
+                  items: snapshot.data,
+                  listaBloc: listaBloc
+                  ); // conecta-se ao widget HomeList
               }
           }
         });

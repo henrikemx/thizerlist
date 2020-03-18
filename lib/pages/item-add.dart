@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:thizerlist/utils/QuantityFormatter.dart';
 import '../layout.dart';
 import '../models/item.dart';
 import '../application.dart';
@@ -19,6 +20,9 @@ class _ItemAddPageState extends State<ItemAddPage> {
   final MoneyMaskedTextController _cValor =
       MoneyMaskedTextController(thousandSeparator: '.', decimalSeparator: ',', leftSymbol: 'R\$ ');
 
+  String selectedUnit = unity.keys.first;
+  bool isSelected = false;
+
   @override
   Widget build(BuildContext context) {
     final inputName = TextFormField(
@@ -33,6 +37,7 @@ class _ItemAddPageState extends State<ItemAddPage> {
         if (value.isEmpty) {
           return 'Obrigatório';
         }
+        return '';
       },
     );
 
@@ -46,12 +51,30 @@ class _ItemAddPageState extends State<ItemAddPage> {
         contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
       ),
+      inputFormatters: [ new QuantityFormatter(
+        precision: unity[this.selectedUnit]
+      )],
       validator: (value) {
         if (int.parse(value) < 1) {
           return 'Informe um valor positivo';
         }
+        return '';
       },
     );
+
+    final inputUnit = DropdownButton<String>(
+        value: this.selectedUnit,
+        onChanged: (String newValue) {
+          setState(() {
+            // calculo vai aqui
+            double valueAsDouble = (double.tryParse(_cQtde.text) ?? 0.0);
+            _cQtde.text = valueAsDouble.toStringAsFixed(unity[newValue]);
+            this.selectedUnit = newValue;
+          });
+        },
+        items: unity.keys.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList());
 
     final inputValor = TextFormField(
       controller: _cValor,
@@ -66,6 +89,7 @@ class _ItemAddPageState extends State<ItemAddPage> {
         if (currencyToDouble(value) < 0.0) {
           return 'Obrigatório';
         }
+        return '';
       },
     );
 
@@ -80,12 +104,53 @@ class _ItemAddPageState extends State<ItemAddPage> {
             'Adicionar item',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
+          Text('Produto'),
           inputName,
-          SizedBox(height: 20),
-          inputQuantidade,
-          SizedBox(height: 20),
+          SizedBox(height: 10),
+          Text('Quantidade'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width - 150,
+                child: inputQuantidade,
+              ),
+              Container(
+                width: 100,
+                child: inputUnit,
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Text('Valor'),
           inputValor,
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Checkbox(
+                activeColor: Layout.primary(),
+                value: this.isSelected,
+                onChanged: (bool value) {
+                  setState(() {
+                    this.isSelected = value;
+                  });
+                },
+              ),
+              GestureDetector(
+                child: Text(
+                'O item está no carrinho ?',
+                style: TextStyle(fontSize: 18),
+              ),
+              onTap: (){
+                setState(() {
+                  this.isSelected = !this.isSelected;
+                });
+              },
+              ),
+            ],
+          ),
           SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -5,7 +5,9 @@ import 'pages/settings.dart';
 import 'package:thizerlist/models/Lista.dart';
 
 class Layout {
-  static final pages = [HomePage.tag, SettingPage.tag, AboutPage.tag];
+  static final pages = [HomePage.tag, AboutPage.tag, SettingPage.tag];
+
+  static BuildContext scaffoldContext;
 
   static int currItem = 0;
 
@@ -15,8 +17,8 @@ class Layout {
       fixedColor: secondary(),
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text('Configurações')),
         BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Sobre')),
+        // BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text('Configurações')),
       ],
       onTap: (int i) {
         currItem = i;
@@ -31,12 +33,17 @@ class Layout {
         actions: showbottom ? _getActions(context) : [],
       ),
       bottomNavigationBar: showbottom ? bottomNavBar : null,
-      body: content,
-    );
+      body: Builder(
+        builder: (BuildContext context) {
+        Layout.scaffoldContext = context;
+        return content;
+      }
+    ));
   }
 
   static List<Widget> _getActions(BuildContext context) {
     List<Widget> items = List<Widget>();
+    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
     TextEditingController _ctrl = TextEditingController();
     if (pages[currItem] == HomePage.tag) {
       items.add(
@@ -46,23 +53,31 @@ class Layout {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext ctx) {
-              final input = TextFormField(
-                      controller: _ctrl,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                          hintText: 'Produto',
-                          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
-                    );
+                    final input = Form(
+                        key: _formkey,
+                        child: TextFormField(
+                          controller: _ctrl,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                              hintText: 'Produto',
+                              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Este campo é de preenchimento obrigatório';
+                            }
+                            return '';
+                          },
+                        ));
 
-              print('====================================');
-              print('context = $context');
-              print('input = $input');
-              print('_ctrl = $_ctrl');
-              print('ctx = $ctx');
-              print('_ctrl.text = ${_ctrl.text}');
-              print('items = $items');
-              print('====================================');
+                    print('====================================');
+                    print('context = $context');
+                    print('input = $input');
+                    print('_ctrl = $_ctrl');
+                    print('ctx = $ctx');
+                    print('_ctrl.text = ${_ctrl.text}');
+                    print('items = $items');
+                    print('====================================');
                     return AlertDialog(
                       title: Text('Nova lista'),
                       content: SingleChildScrollView(
@@ -86,15 +101,17 @@ class Layout {
                                 color: Layout.light(),
                               )),
                           onPressed: () {
-                            ModelLista listaBo = ModelLista();
+                            if (_formkey.currentState.validate()) {
+                              ModelLista listaBo = ModelLista();
 
-                            listaBo.insert({
-                              'name': _ctrl.text,
-                              'created': DateTime.now().toString()
-                            }).then((newRowId) {
-                              Navigator.of(ctx).pop();
-                              Navigator.of(ctx).pushReplacementNamed(HomePage.tag);
-                            });
+                              listaBo.insert({
+                                'name': _ctrl.text,
+                                'created': DateTime.now().toString()
+                              }).then((newRowId) {
+                                Navigator.of(ctx).pop();
+                                Navigator.of(ctx).pushReplacementNamed(HomePage.tag);
+                              });
+                            }
                           },
                         )
                       ],

@@ -27,11 +27,11 @@ class _ItemsPageState extends State<ItemsPage> {
     super.dispose();
   }
 
-  void refresher() {
-    setState(() {
-      this.itemsListBloc.getList();
-    });
-  }
+  // void refresher() {
+  //   setState(() {
+  //     this.itemsListBloc.getList();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,10 @@ class _ItemsPageState extends State<ItemsPage> {
                       print('====================================');
 
                       return ItemsList(
-                          items: snapshot.data, filter: filterText, refresher: this.refresher);
+                          items: snapshot.data, 
+                          filter: filterText, 
+                          itemsListBloc: this.itemsListBloc
+                          );
                     }
                 }
               },

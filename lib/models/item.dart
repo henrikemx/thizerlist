@@ -85,4 +85,10 @@ class ModelItem extends AbstractModel {
     return (rows != 0);
   }
 
+  // Delete all items from a list
+  Future<int> deleteAllFromList(dynamic id) async {
+    Database db = await this.getDb();
+    return await db.delete('item', where: 'fk_lista = ?', whereArgs: [id]);
+  }
+
 }

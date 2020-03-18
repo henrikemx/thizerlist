@@ -9,9 +9,9 @@ import '../layout.dart';
 class ItemsList extends StatefulWidget {
   final List<Map> items;
   final String filter;
-  final Function refresher;
+  final ItemsListBloc itemsListBloc;
 
-  const ItemsList({Key key, this.items, this.filter, this.refresher}) : super(key: key);
+  const ItemsList({Key key, this.items, this.filter, this.itemsListBloc}) : super(key: key);
 
   @override
   _ItemsListState createState() => _ItemsListState();
@@ -77,7 +77,7 @@ class _ItemsListState extends State<ItemsList> {
                 itemBo.update({'checked': !(item['checked'] == 1)}, item['pk_item']).then(
                     (bool updated) {
                   if (updated){
-                    widget.refresher();
+                    widget.itemsListBloc.getList();
                   }
                 });
               },
@@ -119,7 +119,8 @@ class _ItemsListState extends State<ItemsList> {
                                 onPressed: () {
                                   itemBo.delete(item['pk_item']);
                                   Navigator.of(context).pop();
-                                  Navigator.of(context).pushNamed(ItemsPage.tag);
+                                  widget.itemsListBloc.getList();
+                                  // Navigator.of(context).pushNamed(ItemsPage.tag);
                                 }),
                           ],
                         );
