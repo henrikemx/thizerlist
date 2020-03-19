@@ -37,7 +37,7 @@ class _ItemAddPageState extends State<ItemAddPage> {
         if (value.isEmpty) {
           return 'Obrigatório';
         }
-        return '';
+        return null;
       },
     );
 
@@ -58,7 +58,7 @@ class _ItemAddPageState extends State<ItemAddPage> {
         if (int.parse(value) < 1) {
           return 'Informe um valor positivo';
         }
-        return '';
+        return null;
       },
     );
 
@@ -89,7 +89,7 @@ class _ItemAddPageState extends State<ItemAddPage> {
         if (currencyToDouble(value) < 0.0) {
           return 'Obrigatório';
         }
-        return '';
+        return null;
       },
     );
 

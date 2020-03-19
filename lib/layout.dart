@@ -66,7 +66,7 @@ class Layout {
                             if (value.isEmpty) {
                               return 'Este campo é de preenchimento obrigatório';
                             }
-                            return '';
+                            return null;
                           },
                         ));
 
